@@ -4,4 +4,9 @@
     <string name="turn_off">Desligar BT</string>
     <string name="discoverable">BT Detectável</string>
     <string name="get_paired_devices">Obter Dispositivos Emparelhados</string>
+    <string name="BT_is_already_on">Bluetooth já está ligado</string>
+    <string name="Turning_on_BT">Ligar o Bluetooth...</string>
+    <string name="Turning_BT_Off">Desligando o Bluetooth</string>
+    <string name="BT_is_already_off">Bluetooth já está desligado</string>
+    <string name="Making_Your_Device_Discoverable">Tornando seu dispositivo detectável</string>
 </resources>
