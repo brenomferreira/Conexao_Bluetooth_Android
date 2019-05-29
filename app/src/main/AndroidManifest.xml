@@ -6,8 +6,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <!--Fim add permission-->
 
-
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

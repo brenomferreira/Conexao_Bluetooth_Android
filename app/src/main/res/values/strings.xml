@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Conexão Bluetooth Android</string>
+    <string name="turn_on">Ligar BT</string>
+    <string name="turn_off">Desligar BT</string>
+    <string name="discoverable">BT Detectável</string>
+    <string name="get_paired_devices">Obter Dispositivos Emparelhados</string>
 </resources>
