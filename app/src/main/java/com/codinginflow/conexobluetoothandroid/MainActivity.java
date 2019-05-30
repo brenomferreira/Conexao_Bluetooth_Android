@@ -1,10 +1,11 @@
 package com.codinginflow.conexobluetoothandroid;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.print.PrinterId;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     BluetoothAdapter mBlueAdapter;
     boolean conexao = false;
+    private static String MAC = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +136,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 /*conectar*/
                 Intent abrelista = new Intent(MainActivity.this, ListaDispositivos.class);
-startActivityForResult(abrelista, SOLICITA_CONEXAO);
+                startActivityForResult(abrelista, SOLICITA_CONEXAO);
 
-        }}
+
+            }
+        }
 
 
     }
+
 
     private static class ViewHolder {
         Button turn_on;
@@ -152,7 +157,27 @@ startActivityForResult(abrelista, SOLICITA_CONEXAO);
 
     } // Fim ViewHolder
 
-//fixme
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+
+            case SOLICITA_CONEXAO:
+                if (resultCode == Activity.RESULT_OK) {
+                    MAC = data.getExtras().getString(ListaDispositivos.ENDERECO_MAC);
+                    Toast.makeText(getApplicationContext(), "MAC: " + MAC, Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Falha ao obter o MAC", Toast.LENGTH_LONG).show();
+                }
+
+
+        }
+    }
+
+
+    //fixme
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        switch (requestCode) {
