@@ -55,6 +55,14 @@
         android:layout_height="wrap_content"
         android:text="@string/get_paired_devices"
         style="@style/Base.Widget.AppCompat.Button.Colored"/>
+    <!--Get list of paired devices button-->
+    <Button
+        android:id="@+id/conect"
+        android:minWidth="300dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="conectar"
+        style="@style/Base.Widget.AppCompat.Button.Colored"/>
     <!--Show paired devices here-->
     <TextView
         android:id="@+id/pairedTv"

@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
+import android.print.PrinterId;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -19,12 +20,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /*ToDo:*/
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
+    private static final int SOLICITA_CONEXAO = 2;
+
 
     //TextView mStatusBlueTv, mPairedTv;
     //ImageView mBlueIv;
     //Button mOnBtn, mOffBtn, mDiscoverBtn, mPairedBtn;
 
     BluetoothAdapter mBlueAdapter;
+    boolean conexao = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.mViewHolder.discoverable.setOnClickListener(this);
         this.mViewHolder.get_paired_devices = (Button) findViewById(R.id.pairedBtn);
         this.mViewHolder.get_paired_devices.setOnClickListener(this);
+        this.mViewHolder.conectar = (Button) findViewById(R.id.conect);
+        this.mViewHolder.conectar.setOnClickListener(this);
+
+
 
         /*TextView ViewHolder*/
         this.mViewHolder.mStatusBlueTv = (TextView) findViewById(R.id.statusBluetoothTv);
@@ -120,6 +128,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }// fim pairedBTN
 
+        if (id == R.id.conect) {
+            if (conexao) {
+                /*desconectar*/
+            } else {
+                /*conectar*/
+                Intent abrelista = new Intent(MainActivity.this, ListaDispositivos.class);
+startActivityForResult(abrelista, SOLICITA_CONEXAO);
+
+        }}
+
 
     }
 
@@ -128,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button turn_off;
         Button discoverable;
         Button get_paired_devices;
+        Button conectar;
         TextView mStatusBlueTv;
         TextView mPairedTv;
 
