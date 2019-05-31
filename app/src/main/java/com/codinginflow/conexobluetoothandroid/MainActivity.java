@@ -3,6 +3,7 @@ package com.codinginflow.conexobluetoothandroid;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,25 +13,29 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private ViewHolder mViewHolder = new ViewHolder();
 
     /*ToDo:*/
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
     private static final int SOLICITA_CONEXAO = 2;
+    private static String MAC = null;
 
 
     //TextView mStatusBlueTv, mPairedTv;
     //ImageView mBlueIv;
     //Button mOnBtn, mOffBtn, mDiscoverBtn, mPairedBtn;
-
     BluetoothAdapter mBlueAdapter;
+    BluetoothDevice mDevice;
+    BluetoothSocket mSocket;
+
+    UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     boolean conexao = false;
-    private static String MAC = null;
+    private ViewHolder mViewHolder = new ViewHolder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +138,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.conect) {
             if (conexao) {
                 /*desconectar*/
+                try{
+                    mSocket.close();
+                    conexao = false;
+
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), "ocorreu um erro: " + e, Toast.LENGTH_LONG).show();
+                }
             } else {
                 /*conectar*/
                 Intent abrelista = new Intent(MainActivity.this, ListaDispositivos.class);
@@ -145,18 +157,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
-    private static class ViewHolder {
-        Button turn_on;
-        Button turn_off;
-        Button discoverable;
-        Button get_paired_devices;
-        Button conectar;
-        TextView mStatusBlueTv;
-        TextView mPairedTv;
-
-    } // Fim ViewHolder
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -167,6 +167,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (resultCode == Activity.RESULT_OK) {
                     MAC = data.getExtras().getString(ListaDispositivos.ENDERECO_MAC);
                     Toast.makeText(getApplicationContext(), "MAC: " + MAC, Toast.LENGTH_LONG).show();
+                    mDevice = mBlueAdapter.getRemoteDevice(MAC);
+                    try {
+                        /*"00001101-0000-1000-8000-00805f9b34fb"*/
+                        mSocket = mDevice.createRfcommSocketToServiceRecord(myUUID); // criar canal de comunicação
+                        mSocket.connect();
+                        conexao = true;
+                    } catch (IOException e) {
+                        Toast.makeText(getApplicationContext(), "Ocorreu um erro " + e, Toast.LENGTH_LONG).show();
+                conexao = false;
+                    }
+
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Falha ao obter o MAC", Toast.LENGTH_LONG).show();
@@ -174,6 +185,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         }
+    }
+
+    /*ToDo:*/
+    private void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -195,11 +211,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        super.onActivityResult(requestCode, resultCode, data);
 //    }
 
+    private static class ViewHolder {
+        Button turn_on;
+        Button turn_off;
+        Button discoverable;
+        Button get_paired_devices;
+        Button conectar;
+        TextView mStatusBlueTv;
+        TextView mPairedTv;
 
-    /*ToDo:*/
-    private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
+    } // Fim ViewHolder
 
 }
 
