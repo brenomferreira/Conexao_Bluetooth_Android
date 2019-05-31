@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
     private static final int SOLICITA_CONEXAO = 2;
+    ConnectedThread connectedThread;
+
     private static String MAC = null;
 
 
@@ -172,7 +176,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         /*"00001101-0000-1000-8000-00805f9b34fb"*/
                         mSocket = mDevice.createRfcommSocketToServiceRecord(myUUID); // criar canal de comunicação
                         mSocket.connect();
+
                         conexao = true;
+
+                        connectedThread = new ConnectedThread(mSocket);
+                        connectedThread.start();
+
+/*
+                        FIXME: ENVIAR A MENSAGEM APÓS CONECTAR
+*/
+                        connectedThread.enviar("Conectado");
+
+
+
                     } catch (IOException e) {
                         Toast.makeText(getApplicationContext(), "Ocorreu um erro " + e, Toast.LENGTH_LONG).show();
                 conexao = false;
@@ -222,6 +238,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     } // Fim ViewHolder
 
+    private class ConnectedThread extends Thread {
+        // private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket) {
+//            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the input and output streams, using temp objects because
+            // member streams are final
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) { }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run() {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes; // bytes returned from read()
+
+            // Keep listening to the InputStream until an exception occurs
+//            while (true) {
+//                try {
+//                    // Read from the InputStream
+//                    bytes = mmInStream.read(buffer);
+//                    // Send the obtained bytes to the UI activity
+//                    /*FIXME: por enquanto ainda nao esta sendo utilizado (responsavel por receber dados)*/
+//                    /* mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+//                            .sendToTarget();*/
+//                } catch (IOException e) {
+//                    break;
+//                }
+//            }
+        }
+
+        /* Call this from the main activity to send data to the remote device */
+        public void enviar(String dadosEnviar) {
+            byte[] msgBuffer = dadosEnviar.getBytes();
+            try {
+                mmOutStream.write(msgBuffer);
+            } catch (IOException e) {
+
+            }
+        }
+//FIXME
+//        /* Call this from the main activity to shutdown the connection */
+//        public void cancel() {
+//            try {
+//                mmSocket.close();
+//            } catch (IOException e) { }
+//        }
+    }
+
+
+
+
+
 }
+
+
 
 
